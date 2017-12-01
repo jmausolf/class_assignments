@@ -1,7 +1,6 @@
 # Download files
 
 library(curl)
-library(geonames)
 library(tidyverse)
 library(rvest)
 library(stringr)
