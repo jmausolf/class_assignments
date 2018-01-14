@@ -6,23 +6,15 @@ library(rvest)
 library(stringr)
 library(jsonlite)
 library(httr)
-#devtools::install_github("gluc/data.tree")
 library(data.tree)
 library(magrittr)
 library(lubridate)
 
-
-#url <- "https://api.github.com/repos/uchicago-computation-workshop/guanglei_hong/issues"
-#url <- "https://api.github.com/repos/uchicago-computation-workshop/guanglei_hong/issues?per_page=1000"
-
-url_base <- "https://api.github.com/repos/uchicago-computation-workshop/NAME/issues?per_page=1000"
 speakers <- c('luis_bettencourt', 'ben_zhao', 'santo_fortunato', 'damon_centola', 'guanglei_hong')
 
-for(name in speakers){
-  url <- str_replace(url_base, "NAME", name)
-  print(url)
-}
 
+#######################################
+## Functions
 
 make_weekly_report <- function(speaker, total_comments = FALSE){
   
@@ -50,8 +42,6 @@ make_weekly_report <- function(speaker, total_comments = FALSE){
       return(report_first_comment);
 }
 
-# x <- make_weekly_report("ben_zhao", total_comments = TRUE)
-# y <- make_weekly_report("ben_zhao")
 
 make_report <- function(speakers, total_comments = TRUE){
   
@@ -78,41 +68,19 @@ make_report <- function(speakers, total_comments = TRUE){
 }
 
 
-# speakers <- c('ben_zhao')
-# test <- make_report(speakers, total_comments = FALSE)
-# 
-# 
-# output <- vector("list", length(speakers))
-# for(i in seq_along(output)){
-#   output[[i]] <- make_weekly_report(speakers[[i]])
-# }
-# 
-# df <- do.call(rbind, output)
+#######################################
+## GET Github Comments
+comments_full <- make_report(speakers, total_comments = TRUE)
+comments_single <- make_report(speakers, total_comments = FALSE)
 
-
-#graph
-graph_df <- df %>% 
-  #select(cycle, pid3, pid2, cid, occ) %>% 
+#graph of contributions
+graph_df <- comments_single %>% 
   mutate(date = as.Date(created_at)) %>% 
   group_by(date) %>% 
   mutate(daily_count = n()) %>% 
-  unique()
-
-
-ggplot(data = graph_df, aes(date, daily_count)) +
-  geom_line()
-  
-
-# 
-# comments <- df %>% 
-#   mutate(date = as.Date(created_at)) %>% 
-#   group_by(username) %>% 
-#   mutate(total_count = n()) %>% 
-#   unique()
-
-# Comments, All
-comments_full <- make_report(speakers, total_comments = TRUE)
-comments_single <- make_report(speakers, total_comments = FALSE)
+  unique() %>% 
+  ggplot(aes(date, daily_count)) +
+    geom_line()
 
 
 #######################################
@@ -122,26 +90,39 @@ fullnames <- read_csv("github_usernames_full_names.csv") %>%
   rename(username = 'GitHub User ID',
          fullname = 'Full Legal Name (Lastname, First Middle)',
          email = 'University of Chicago Email') %>% 
-  select(username, fullname) %>% 
+  #select(username, fullname) %>% 
   filter(!is.na(username))
 
 
 #######################################
-## Merge
-report0 <- anti_join(comments, fullnames)
-report <- full_join(comments, fullnames)
+## Merge and Make Reports
+
 
 #Example Report (Single Comments)
 report_single_weekly_comment <- full_join(comments_single, fullnames) %>% 
-  select(fullname, username, userid, total_count) %>% 
+  select(fullname, username, userid, email, total_count) %>% 
   arrange(fullname) %>% 
   arrange(desc(total_count)) %>% 
-  unique()
+  filter(!is.na(fullname)) %>% 
+  unique() %>% 
+  write_csv("report_single_weekly_comment_MACSS.csv", col_names = TRUE)
 
 
+#Example Report (All Comments)
 report_all_weekly_comment <- full_join(comments_full, fullnames) %>% 
-  select(fullname, username, userid, total_count) %>% 
+  select(fullname, username, userid, email, total_count) %>% 
   arrange(fullname) %>% 
-  arrange(desc(total_count)) %>% 
-  unique()
+  arrange(desc(total_count)) %>%
+  filter(!is.na(fullname)) %>% 
+  unique() %>% 
+  write_csv("report_all_comments_MACSS.csv", col_names = TRUE)
+
+
+#Example Report (Non-MACSS Students/Staff/Facults)
+report_non_MACSS <- anti_join(comments_single, fullnames) %>% 
+  select(username, userid, total_count) %>% 
+    arrange(desc(total_count)) %>%
+    unique() %>% 
+  write_csv("report_single_weekly_comment_non_MACSS.csv", col_names = TRUE)
+
 
