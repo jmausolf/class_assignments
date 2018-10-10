@@ -10,10 +10,10 @@
 
 
 #Define List of User Names
-users='Alex-A14 banerjeeesha LucasBJ xiaorancheng incipamus yanningcui ifarah srishtigoel nhonors kimswchi elliekoh FrannyMendesLevitin limchengyee lmhjulian jmarvelcoen nnickels yuepan4 pohyuquan XianQu2016 Rjschwa sullivannicole xt5 gmvelez longxuan0908 MichelleWang32 zhengyinyuan dizhou2010'
+users='dhruvalb KenChenCompEcon keertanavc jtschoi yundai424 RSFlores jsgenan NetaGee fulinguo cosettelh hanjiaxu ellenhsieh ShuyanHuang nerdizzyz ruixili ShanglunLi liu431 SixueLiuMACSS hannamn madelaida smiklin policyglot SiyuanPengMike boyangqu Haowen Shang tonofshell bhargavvader sunying2018 sanittawan josetan delores9584 nt546 di-Tong zeyuxu1997 yalingtsui dongchengecon Bobicheng-Zhang TianxinZheng AZorroMedin'
 
 #Specify Fork
-fork="hw08"
+fork="DescrStats"
 
 
 #Initiate Loop
