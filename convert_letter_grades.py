@@ -185,10 +185,6 @@ assignment_cols = ['a'+str(i) for i in range(1, len(grade_cols)+1)]
 dfs = df[grade_cols].copy()
 dfs.columns = assignment_cols
 
-#Fill in Missing Grades
-a3_mode = dfs['a3'].value_counts().idxmax()
-dfs['a3'].fillna(a3_mode, inplace=True)
-
 #Grade Mapping
 grade_mapping = dict(zip(letter_grades, gpa_grades))
 print(grade_mapping)
@@ -219,5 +215,5 @@ drop_cols = ['average_letter_grade_three_assignments_internal_benchmark_for_pass
 grades = grades.drop(drop_cols, axis=1)
 
 print(grades.columns)
-grades.to_csv('converted_grades.csv')
+grades.to_csv('converted_grades.csv', index=False)
 
